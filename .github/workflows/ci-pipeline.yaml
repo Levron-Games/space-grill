@@ -17,24 +17,29 @@ concurrency:
 jobs:
   baseline:
     name: Shared workflow policy
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-baseline.yml@80340258d8695c41d648d8a67e05df67a2da4972
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-baseline.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
       require_concurrency: true
     permissions:
       contents: read
 
-  csharp:
-    name: C# validation
+  godot:
+    name: Shared Godot profile + C# validation
     needs: baseline
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-dotnet.yml@80340258d8695c41d648d8a67e05df67a2da4972
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-godot.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      global_json_file: ''
+      godot_version: '4.7.2'
+      dotnet: true
       dotnet_version: '5.0.x'
-      restore_command: dotnet restore Assets/Scripts/SpaceGrill.sln
-      build_command: dotnet build Assets/Scripts/SpaceGrill.sln --configuration Release --no-restore
-      test_command: dotnet test Assets/Scripts/SpaceGrill.sln --configuration Release --no-build --no-restore --verbosity normal
+      working_directory: .
+      setup_command: dotnet restore Assets/Scripts/SpaceGrill.sln
+      dotnet_build_command: |
+        dotnet build Assets/Scripts/SpaceGrill.sln --configuration Release --no-restore
+        dotnet test Assets/Scripts/SpaceGrill.sln --configuration Release --no-build --no-restore --verbosity normal
+      editor_import: false
+      runtime_smoke: false
     permissions:
       contents: read
       packages: read
@@ -42,7 +47,7 @@ jobs:
   version-intent:
     name: Version intent
     if: github.event_name == 'pull_request'
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/version-intent.yml@80340258d8695c41d648d8a67e05df67a2da4972
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/version-intent.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
     with:
       pr_body: ${{ github.event.pull_request.body }}
       pr_number: ${{ github.event.pull_request.number }}
