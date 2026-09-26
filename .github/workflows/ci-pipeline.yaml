@@ -37,6 +37,7 @@ jobs:
       test_command: dotnet test Assets/Scripts/SpaceGrill.sln --configuration Release --no-build --no-restore --verbosity normal
     permissions:
       contents: read
+      packages: read
 
   version-intent:
     name: Version intent
