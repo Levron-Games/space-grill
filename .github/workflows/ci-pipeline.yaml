@@ -18,7 +18,7 @@ concurrency:
 jobs:
   guard:
     name: Shared development guard
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-guard.yml@e7ced139f1a8e1b02a343a3be822c523c139e302
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-guard.yml@e432396f2a71d28dd65fd582e78aee2270e39e2b
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
       tier: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'heavy' || 'light' }}
@@ -32,7 +32,7 @@ jobs:
   godot:
     name: Shared Godot profile + C# validation
     needs: guard
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-godot.yml@e7ced139f1a8e1b02a343a3be822c523c139e302
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-godot.yml@e432396f2a71d28dd65fd582e78aee2270e39e2b
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
       tier: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'heavy' || 'light' }}
