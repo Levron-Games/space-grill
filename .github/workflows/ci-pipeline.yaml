@@ -9,49 +9,42 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  baseline:
-    name: Shared workflow policy
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-baseline.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
+  guard:
+    name: Shared development guard
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-guard.yml@e7ced139f1a8e1b02a343a3be822c523c139e302
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      tier: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'heavy' || 'light' }}
       require_concurrency: true
+      pr_body: ${{ github.event.pull_request.body || '' }}
+      pr_number: ${{ github.event.pull_request.number || 0 }}
     permissions:
       contents: read
+      pull-requests: read
 
   godot:
     name: Shared Godot profile + C# validation
-    needs: baseline
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-godot.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
+    needs: guard
+    uses: FullHouseDevelopment/CommonWork/.github/workflows/profile-godot.yml@e7ced139f1a8e1b02a343a3be822c523c139e302
     with:
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      tier: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'heavy' || 'light' }}
       godot_version: '4.7.2'
       dotnet: true
       dotnet_version: '5.0.x'
       working_directory: .
       setup_command: dotnet restore Assets/Scripts/SpaceGrill.sln
       dotnet_build_command: |
-        dotnet build Assets/Scripts/SpaceGrill.sln --configuration Release --no-restore
-        dotnet test Assets/Scripts/SpaceGrill.sln --configuration Release --no-build --no-restore --verbosity normal
+        dotnet build Assets/Scripts/SpaceGrill.sln --configuration Release --no-restore\n        dotnet test Assets/Scripts/SpaceGrill.sln --configuration Release --no-build --no-restore --verbosity normal
       editor_import: false
       runtime_smoke: false
     permissions:
       contents: read
       packages: read
-
-  version-intent:
-    name: Version intent
-    if: github.event_name == 'pull_request'
-    uses: FullHouseDevelopment/CommonWork/.github/workflows/version-intent.yml@e94f1a2958f87e12a9baf32327c65887b3d9f096
-    with:
-      pr_body: ${{ github.event.pull_request.body }}
-      pr_number: ${{ github.event.pull_request.number }}
-      head: ${{ github.event.pull_request.head.sha }}
-    permissions:
-      contents: read
-      pull-requests: read
