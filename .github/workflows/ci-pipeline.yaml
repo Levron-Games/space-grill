@@ -53,7 +53,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: FullHouseDevelopment/CommonWork/.github/actions/setup-dotnet@d82ac76e9ba404adebee99bc20f8eed4472f1371
+      uses: FullHouseDevelopment/CommonWork/.github/actions/setup-dotnet@b512701de3bb848f507a11ea6dd7922e821e39cb
       with:
         global_json_file: ''
         dotnet_version: 5.0.x
