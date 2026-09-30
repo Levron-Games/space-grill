@@ -53,9 +53,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: FullHouseDevelopment/CommonWork/.github/actions/setup-dotnet@000000000000000000000000000000000000000
       with:
-        dotnet-version: 5.0.x
+        global_json_file: ''
+        dotnet_version: 5.0.x
+        cache: 'false'
     - name: Restore Unity cache
       uses: actions/cache/restore@v4
       id: unityCacheRestore
